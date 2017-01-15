@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET','POST'])
 def index():
     print("INDEX")
-    res = '{"status":"OK"}'
+    res = '{"status":"YES"}'
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
