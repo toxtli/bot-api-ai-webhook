@@ -32,30 +32,33 @@ def webhook():
     req = request.get_json(silent=True, force=True)
     print("Request:")
     print(json.dumps(req, indent=4))
-    inputData = {}
-    try:
-        inputData = {
-            "inputSource": req['originalRequest']['source'],
-            "userId": req['originalRequest']['data']['user']['user_id'],
-            "action": req['result']['action'],
-            "parameters": req['result']['parameters'],
-            "incomplete": req['result']['actionIncomplete'],
-            "response": req['result']['fulfillment']['speech'],
-            "input": req['result']['resolvedQuery']
-        }
-    except:
-        print(sys.exc_info()[0])
+    
+    inputData = {
+        "inputSource": req['originalRequest']['source'],
+        "userId": req['originalRequest']['data']['user']['user_id'],
+        "action": req['result']['action'],
+        "parameters": req['result']['parameters'],
+        "incomplete": req['result']['actionIncomplete'],
+        "response": req['result']['fulfillment']['speech'],
+        "input": req['result']['resolvedQuery']
+    }
     print(json.dumps(inputData, indent=4))
-    res = evaluate(inputData)
-    res = json.dumps(res, indent=4)
+    
+    actionParts = inputData['action'].split('.')
+    res = inputData.response
+    if actionParts[0] == 'self':
+        res = evaluate(actionParts[1], inputData)
     print(res)
+    
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
 
-def evaluate(data):
-    message = "Ready"
-    return responseFormat(message)
+def evaluate(method, data):
+    message = method
+    res = responseFormat(message)
+    res = json.dumps(res, indent=4)
+    return res
     
 def responseFormat(message):
     return {
