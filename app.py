@@ -21,6 +21,7 @@ def index():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    print("MSG RECEIVED")
     req = request.get_json(silent=True, force=True)
 
     print("Request:")
