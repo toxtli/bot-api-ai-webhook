@@ -45,7 +45,7 @@ def webhook():
     print(json.dumps(inputData, indent=4))
     
     actionParts = inputData['action'].split('.')
-    res = inputData.response
+    res = inputData['response']
     if actionParts[0] == 'self':
         res = evaluate(actionParts[1], inputData)
     print(res)
