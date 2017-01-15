@@ -40,8 +40,8 @@ def webhook():
             "action": req['result']['action'],
             "parameters": req['result']['parameters'],
             "incomplete": req['result']['actionIncomplete'],
-            "response": res['result']['fulfillment']['speech'],
-            "input": res['result']['resolvedQuery']
+            "response": req['result']['fulfillment']['speech'],
+            "input": req['result']['resolvedQuery']
         }
     except:
         print(sys.exc_info()[0])
