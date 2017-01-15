@@ -24,9 +24,9 @@ def webhook():
     print("MSG RECEIVED")
     req = request.get_json(silent=True, force=True)
     inputData = {
-        "inputSource": req['originalRequest']
-        "userId": req['originalRequest']['data']['user']['user_id']
-        "action": req['result']['action']
+        "inputSource": req['originalRequest']['source'],
+        "userId": req['originalRequest']['data']['user']['user_id'],
+        "action": req['result']['action'],
         "parameters": req['result']['parameters']
     }
     
