@@ -32,15 +32,19 @@ def webhook():
     req = request.get_json(silent=True, force=True)
     print("Request:")
     print(json.dumps(req, indent=4))
-    inputData = {
-        "inputSource": req['originalRequest']['source'],
-        "userId": req['originalRequest']['data']['user']['user_id'],
-        "action": req['result']['action'],
-        "parameters": req['result']['parameters'],
-        "incomplete": req['result']['actionIncomplete'],
-        "response": res['result']['fulfillment']['speech'],
-        "input": res['result']['resolvedQuery']
-    }
+    inputData = {}
+    try:
+        inputData = {
+            "inputSource": req['originalRequest']['source'],
+            "userId": req['originalRequest']['data']['user']['user_id'],
+            "action": req['result']['action'],
+            "parameters": req['result']['parameters'],
+            "incomplete": req['result']['actionIncomplete'],
+            "response": res['result']['fulfillment']['speech'],
+            "input": res['result']['resolvedQuery']
+        }
+    catch:
+        print(sys.exc_info()[0])
     print(json.dumps(inputData, indent=4))
     res = evaluate(inputData)
     res = json.dumps(res, indent=4)
