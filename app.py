@@ -23,9 +23,16 @@ def index():
 def webhook():
     print("MSG RECEIVED")
     req = request.get_json(silent=True, force=True)
-
+    inputData = {
+        "inputSource": req['originalRequest']
+        "userId": req['originalRequest']['data']['user']['user_id']
+        "action": req['result']['action']
+        "parameters": req['result']['parameters']
+    }
+    
     print("Request:")
     print(json.dumps(req, indent=4))
+    print(json.dumps(inputData, indent=4))
 
     # res = processRequest(req)
     res = {
