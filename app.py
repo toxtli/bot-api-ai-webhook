@@ -29,24 +29,26 @@ def webhook():
         "action": req['result']['action'],
         "parameters": req['result']['parameters']
     }
-    
     print("Request:")
     print(json.dumps(req, indent=4))
     print(json.dumps(inputData, indent=4))
-
-    # res = processRequest(req)
-    res = {
-        "speech": "friend",
-        "displayText": "friend",
-        "source": "apiai-weather-webhook-sample"
-    }
-
+    res = evaluate(inputData)
     res = json.dumps(res, indent=4)
-    # print(res)
+    print(res)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
 
+def evaluate(data):
+    message = "Ready"
+    return responseFormat(message)
+    
+def responseFormat(message):
+    return {
+        "speech": message,
+        "displayText": message,
+        "source": "apiai-weather-webhook-sample"
+    }
 
 def processRequest(req):
     if req.get("result").get("action") != "yahooWeatherForecast":
