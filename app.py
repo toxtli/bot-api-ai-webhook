@@ -27,7 +27,9 @@ def webhook():
         "inputSource": req['originalRequest']['source'],
         "userId": req['originalRequest']['data']['user']['user_id'],
         "action": req['result']['action'],
-        "parameters": req['result']['parameters']
+        "parameters": req['result']['parameters'],
+        "incomplete": req['result']['actionIncomplete'],
+        "response": res['result']['fulfillment']['speech']
     }
     print("Request:")
     print(json.dumps(req, indent=4))
