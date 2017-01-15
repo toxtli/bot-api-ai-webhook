@@ -11,6 +11,13 @@ from flask import make_response
 # Flask app should start in global layout
 app = Flask(__name__)
 
+@app.route('/', methods=['GET','POST'])
+def index():
+    print("INDEX")
+    res = '{"status":"OK"}'
+    r = make_response(res)
+    r.headers['Content-Type'] = 'application/json'
+    return r
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
