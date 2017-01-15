@@ -31,7 +31,8 @@ def webhook():
         "action": req['result']['action'],
         "parameters": req['result']['parameters'],
         "incomplete": req['result']['actionIncomplete'],
-        "response": res['result']['fulfillment']['speech']
+        "response": res['result']['fulfillment']['speech'],
+        "input": res['result']['resolvedQuery']
     }
     print(json.dumps(inputData, indent=4))
     res = evaluate(inputData)
