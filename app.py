@@ -43,7 +43,7 @@ def webhook():
             "response": res['result']['fulfillment']['speech'],
             "input": res['result']['resolvedQuery']
         }
-    catch:
+    except:
         print(sys.exc_info()[0])
     print(json.dumps(inputData, indent=4))
     res = evaluate(inputData)
