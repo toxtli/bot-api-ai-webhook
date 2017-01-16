@@ -70,6 +70,8 @@ def webhook():
         inputData["userId"] = req['originalRequest']['data']['user']['user_id']
     elif inputData['inputSource'] == 'facebook':
         inputData["userId"] = req['originalRequest']['data']['sender']['id']
+    elif inputData['inputSource'] == 'slack_testbot':
+        inputData["userId"] = req['originalRequest']['data']['user']
         
     print(json.dumps(inputData, indent=4))
     
