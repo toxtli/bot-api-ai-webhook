@@ -58,7 +58,7 @@ def webhook():
     
     inputData = {
         "inputSource": req['originalRequest']['source'],
-        "userId": req['originalRequest']['data']['user']['user_id'],
+        "userId": '',
         "action": req['result']['action'],
         "intent": req['result']['metadata']['intentName'],
         "parameters": req['result']['parameters'],
