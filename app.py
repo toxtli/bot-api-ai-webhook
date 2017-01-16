@@ -60,11 +60,17 @@ def webhook():
         "inputSource": req['originalRequest']['source'],
         "userId": req['originalRequest']['data']['user']['user_id'],
         "action": req['result']['action'],
+        "intent": req['result']['metadata']['intentName'],
         "parameters": req['result']['parameters'],
         "incomplete": req['result']['actionIncomplete'],
         "response": req['result']['fulfillment']['speech'],
         "input": req['result']['resolvedQuery']
     }
+    if inputData['inputSource'] == 'google':
+        inputData["userId"] = req['originalRequest']['data']['user']['user_id']
+    elif inputData['inputSource'] == 'facebook':
+        inputData["userId"] = req['originalRequest']['data']['sender']['id']
+        
     print(json.dumps(inputData, indent=4))
     
     actionParts = inputData['action'].split('.')
