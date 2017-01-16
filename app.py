@@ -74,6 +74,8 @@ def webhook():
         inputData["userId"] = req['originalRequest']['data']['user']
     elif inputData['inputSource'] == 'twitter':
         inputData["userId"] = req['originalRequest']['data']['direct_message']['recipient_id_str']
+    elif inputData['inputSource'] == 'skype':
+        inputData["userId"] = req['originalRequest']['data']['message']['user']['id']
         
     print(json.dumps(inputData, indent=4))
     
