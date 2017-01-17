@@ -46,6 +46,7 @@ def alexa():
                 "input": ''
             }
             for i in inputData["parameters"]:
+                print(i)
                 inputData["parameters"][i] = inputData["parameters"][i]['value']
             output = evaluate(inputData)
             print(output)
