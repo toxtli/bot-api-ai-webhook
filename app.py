@@ -26,6 +26,38 @@ def index():
     r.headers['Content-Type'] = 'application/json'
     return r
 
+@app.route('/alexa', methods=['GET','POST'])
+def alexa():
+    print("ONLINE")
+    data = request.data
+    print(data)
+    exit = {
+        'version': '1.0',
+        'sessionAttributes': {},
+        'response': {
+            'outputSpeech': {
+                'type': 'PlainText',
+                'text': 'Text One'
+            },
+            'card': {
+                'type': 'Simple',
+                'title': "SessionSpeechlet - " + 'Title',
+                'content': "SessionSpeechlet - " + 'Text One'
+            },
+            'reprompt': {
+                'outputSpeech': {
+                    'type': 'PlainText',
+                    'text': 'Text Two'
+                }
+            },
+            'shouldEndSession': False
+        }
+    }
+    res = json.dumps(exit)
+    r = make_response(res)
+    r.headers['Content-Type'] = 'application/json'
+    return r
+
 @app.route('/online', methods=['GET','POST'])
 def online():
     print("ONLINE")
