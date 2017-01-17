@@ -72,9 +72,8 @@ def alexa():
             }
         }
     except:
-        err = sys.exc_info()[0]
-        print(err)
-        exit = err
+        print(sys.exc_info())
+        exit = sys.exc_info()[0]
     res = json.dumps(exit)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
@@ -135,7 +134,9 @@ def webhook():
         
     print(json.dumps(inputData, indent=4))
     
-    res = evaluate(inputData)
+    message = evaluate(inputData)
+    res = responseFormat(message)
+    res = json.dumps(res, indent=4)
     print(res)
     
     r = make_response(res)
@@ -216,9 +217,7 @@ def evaluate(data):
             message = hasErrors
         if not message:
             message = "I have confirmed successfully your confirmation code, please ask me to execute something by saying, execute open."
-    res = responseFormat(message)
-    res = json.dumps(res, indent=4)
-    return res
+    return message
 
 def send_message(message, token):
     apns = APNs(use_sandbox=True, cert_file='aps_dev_cert.pem', key_file='aps_dev_key_decrypted.pem')
