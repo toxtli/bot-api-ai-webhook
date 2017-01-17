@@ -50,10 +50,12 @@ def alexa():
                 "input": ''
             }
             print(4)
-            for i in inputData["parameters"]:
+            for i in inputData["parameters"].keys():
                 print(5)
-                inputData["parameters"][i] = inputData["parameters"][i]['value']
+                inputData["parameters"][i] = inputData["parameters"][i]["value"]
+                print(12)
             output = evaluate(inputData)
+            print(13)
             print(output)
         print(6)
         exit = {
