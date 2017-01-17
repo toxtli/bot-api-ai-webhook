@@ -28,26 +28,42 @@ def index():
 
 @app.route('/alexa', methods=['GET','POST'])
 def alexa():
+    output = ''
     print("ALEXA")
     data = request.data
     print(data)
+    if data:
+        obj = json.dumps(data)
+        inputData = {
+            "inputSource": 'alexa',
+            "userId": obj['session']['user']['userId'],
+            "action": '',
+            "intent": obj['request']['intent']['name'],
+            "parameters": obj['request']['intent']['slots'],
+            "incomplete": False,
+            "response": '',
+            "input": ''
+        }
+        for i in inputData["parameters"]:
+            inputData["parameters"][i] = inputData["parameters"][i]['value']
+        output = evaluate(inputData)
     exit = {
         'version': '1.0',
         'sessionAttributes': {},
         'response': {
             'outputSpeech': {
                 'type': 'PlainText',
-                'text': 'Text One'
+                'text': output
             },
             'card': {
                 'type': 'Simple',
                 'title': "SessionSpeechlet - " + 'Title',
-                'content': "SessionSpeechlet - " + 'Text One'
+                'content': "SessionSpeechlet - " + output
             },
             'reprompt': {
                 'outputSpeech': {
                     'type': 'PlainText',
-                    'text': 'Text Two'
+                    'text': output
                 }
             },
             'shouldEndSession': False
@@ -113,10 +129,7 @@ def webhook():
         
     print(json.dumps(inputData, indent=4))
     
-    actionParts = inputData['action'].split('.')
-    res = inputData['response']
-    if actionParts[0] == 'self':
-        res = evaluate(actionParts[1], inputData)
+    res = evaluate(inputData)
     print(res)
     
     r = make_response(res)
@@ -165,32 +178,38 @@ def generate_code(token):
     db.insert({'token':token,'code':code,'userId':''})
     return code
 
-def evaluate(method, data):
+def evaluate(data):
     message = data['response']
     userId = data['userId']
     user = get_user_info(userId)
-    if method == 'welcome':
+    if data['intent'] == 'WelcomeIntent':
         if not user:
             message = "Welcome, I can see that you are a new user. In order to " \
                 "be able to work with you, you need to install a Mac OS App, " \
                 "if you have already installed it please provide me the " \
                 "confirmation code by saying, The confirmation code is, " \
                 "and followed by the separated four numbers"
-    elif method == 'execute':
+        if not message:
+            message = "Welcome back my friend, I am able to control your computer. Please tell me what do you want to execute by saying, execute open."
+    elif method == 'MyColorIsIntent':
         if not user:
             message = "You received a confirmation code when the Mac OS " \
                 "application was intalled, please provide me the " \
                 "confirmation code by saying, The confirmation code is, " \
                 "and followed by the separated four numbers"
         else:
+            if not message:
+                message = "Your command will be executed in a moment."
             action = data['parameters']['Color']
             token = user['token']
             send_message(action, token)
-    elif method == 'confirmation':
+    elif method == 'ConfirmationCodeIntent':
         code = data['parameters']['Code']
         hasErrors = get_confirmation_code(userId, code)
         if hasErrors:
             message = hasErrors
+        if not message:
+            message = "I have confirmed successfully your confirmation code, please ask me to execute something by saying, execute open."
     res = responseFormat(message)
     res = json.dumps(res, indent=4)
     return res
