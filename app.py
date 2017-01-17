@@ -72,7 +72,9 @@ def alexa():
             }
         }
     except:
-        exit = sys.exc_info()[0]
+        err = sys.exc_info()[0]
+        print(err)
+        exit = err
     res = json.dumps(exit)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
