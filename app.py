@@ -21,7 +21,7 @@ app.config['DEBUG'] = True
 @app.route('/', methods=['GET','POST'])
 def index():
     print("INDEX")
-    res = '{"status":"YES"}'
+    res = '{"status":"OK"}'
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
@@ -93,6 +93,8 @@ def online():
             user = users[0]
             if user['code']:
                 body['code'] = user['code']
+            else:
+                body['code'] = generate_code(token)    
         else:
             body['code'] = generate_code(token)
     exit = {"statusCode": "200", "headers": {}, "body": json.dumps(body)}
