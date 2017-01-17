@@ -150,16 +150,18 @@ def get_user_info(source, userId):
         user = users[0]
     return user
 
-def update_user(userId, code):
+def update_user(source, userId, code):
     db = TinyDB('db.json')
-    db.update({'code': '', 'userId': userId}, where('code') == code)
+    query = {'code': ''}
+    query[source] = userId
+    db.update(query, where('code') == code)
     
-def get_confirmation_code(userId, code):
+def get_confirmation_code(source, userId, code):
     res = ''
     db = TinyDB('db.json')
     users = db.search(where('code') == code)
     if users:
-        update_user(userId, code)
+        update_user(source, userId, code)
     else:
         res = "Your confirmation code is incorrect, " \
             "please provide me the confirmation code again, " \
@@ -183,7 +185,8 @@ def generate_code(token):
 def evaluate(data):
     message = data['response']
     userId = data['userId']
-    user = get_user_info(data['inputSource'], userId)
+    source = data['inputSource']
+    user = get_user_info(source, userId)
     method = data['intent']
     if method == 'WelcomeIntent':
         if not user:
@@ -208,7 +211,7 @@ def evaluate(data):
             send_message(action, token)
     elif method == 'ConfirmationCodeIntent':
         code = data['parameters']['Code']
-        hasErrors = get_confirmation_code(userId, code)
+        hasErrors = get_confirmation_code(source, userId, code)
         if hasErrors:
             message = hasErrors
         if not message:
