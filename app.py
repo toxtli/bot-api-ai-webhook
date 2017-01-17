@@ -202,7 +202,8 @@ def evaluate(data):
     message = data['response']
     userId = data['userId']
     user = get_user_info(userId)
-    if data['intent'] == 'WelcomeIntent':
+    method = data['intent']
+    if method == 'WelcomeIntent':
         if not user:
             message = "Welcome, I can see that you are a new user. In order to " \
                 "be able to work with you, you need to install a Mac OS App, " \
