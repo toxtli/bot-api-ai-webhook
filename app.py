@@ -37,7 +37,7 @@ def alexa():
         print(data)
         if data:
             print(2)
-            obj = json.dumps(data)
+            obj = json.loads(data)
             print(3)
             inputData = {
                 "inputSource": 'alexa',
