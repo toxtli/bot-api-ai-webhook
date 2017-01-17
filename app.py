@@ -28,13 +28,17 @@ def index():
 
 @app.route('/alexa', methods=['GET','POST'])
 def alexa():
+    exit = {"status":"OK"}
     try:
         output = ''
         print("ALEXA")
         data = request.data
+        print(1)
         print(data)
         if data:
+            print(2)
             obj = json.dumps(data)
+            print(3)
             inputData = {
                 "inputSource": 'alexa',
                 "userId": obj['session']['user']['userId'],
@@ -45,11 +49,13 @@ def alexa():
                 "response": '',
                 "input": ''
             }
+            print(4)
             for i in inputData["parameters"]:
-                print(i)
+                print(5)
                 inputData["parameters"][i] = inputData["parameters"][i]['value']
             output = evaluate(inputData)
             print(output)
+        print(6)
         exit = {
             'version': '1.0',
             'sessionAttributes': {},
@@ -73,11 +79,15 @@ def alexa():
             }
         }
     except:
+        print(7)
         print(sys.exc_info())
-        exit = sys.exc_info()[0]
+    print(8)
     res = json.dumps(exit)
+    print(9)
     r = make_response(res)
+    print(10)
     r.headers['Content-Type'] = 'application/json'
+    print(11)
     return r
 
 @app.route('/online', methods=['GET','POST'])
