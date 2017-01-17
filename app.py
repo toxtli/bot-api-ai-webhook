@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from apns import APNs, Frame, Payload
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, Query, where
 
 import urllib2
 import urllib
@@ -33,12 +33,9 @@ def alexa():
         output = ''
         print("ALEXA")
         data = request.data
-        print(1)
         print(data)
         if data:
-            print(2)
             obj = json.loads(data)
-            print(3)
             inputData = {
                 "inputSource": 'alexa',
                 "userId": obj['session']['user']['userId'],
@@ -49,15 +46,10 @@ def alexa():
                 "response": '',
                 "input": ''
             }
-            print(4)
             for i in inputData["parameters"].keys():
-                print(5)
                 inputData["parameters"][i] = inputData["parameters"][i]["value"]
-                print(12)
             output = evaluate(inputData)
-            print(13)
             print(output)
-        print(6)
         exit = {
             'version': '1.0',
             'sessionAttributes': {},
@@ -81,15 +73,10 @@ def alexa():
             }
         }
     except:
-        print(7)
         print(sys.exc_info())
-    print(8)
     res = json.dumps(exit)
-    print(9)
     r = make_response(res)
-    print(10)
     r.headers['Content-Type'] = 'application/json'
-    print(11)
     return r
 
 @app.route('/online', methods=['GET','POST'])
@@ -101,8 +88,7 @@ def online():
         body['status'] = 'OK'
         token = params['token']
         db = TinyDB('db.json')
-        User = Query()
-        users = db.search(User.token == token)
+        users = db.search(where('token') == token)
         if users:
             user = users[0]
             if user['code']:
@@ -156,25 +142,22 @@ def webhook():
     r.headers['Content-Type'] = 'application/json'
     return r
 
-def get_user_info(userId):
+def get_user_info(source, userId):
     user = None
     db = TinyDB('db.json')
-    User = Query()
-    users = db.search(User.userId == userId)
+    users = db.search(where(source) == userId)
     if users:
         user = users[0]
     return user
 
 def update_user(userId, code):
     db = TinyDB('db.json')
-    User = Query()
-    db.update({'code': '', 'userId': userId}, User.code == code)
+    db.update({'code': '', 'userId': userId}, where('code') == code)
     
 def get_confirmation_code(userId, code):
     res = ''
     db = TinyDB('db.json')
-    User = Query()
-    users = db.search(User.code == code)
+    users = db.search(where('code') == code)
     if users:
         update_user(userId, code)
     else:
@@ -189,10 +172,9 @@ def get_random_number():
 
 def generate_code(token):
     db = TinyDB('db.json')
-    User = Query()
     while True:
         code = get_random_number()
-        codes = db.search(User.code == code)
+        codes = db.search(where('code') == code)
         if not codes:
             break
     db.insert({'token':token,'code':code,'userId':''})
@@ -201,7 +183,7 @@ def generate_code(token):
 def evaluate(data):
     message = data['response']
     userId = data['userId']
-    user = get_user_info(userId)
+    user = get_user_info(data['inputSource'], userId)
     method = data['intent']
     if method == 'WelcomeIntent':
         if not user:
