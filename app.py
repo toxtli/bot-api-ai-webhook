@@ -28,7 +28,7 @@ def index():
 
 @app.route('/alexa', methods=['GET','POST'])
 def alexa():
-    print("ONLINE")
+    print("ALEXA")
     data = request.data
     print(data)
     exit = {
