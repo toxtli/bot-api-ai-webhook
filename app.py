@@ -28,48 +28,51 @@ def index():
 
 @app.route('/alexa', methods=['GET','POST'])
 def alexa():
-    output = ''
-    print("ALEXA")
-    data = request.data
-    print(data)
-    if data:
-        obj = json.dumps(data)
-        inputData = {
-            "inputSource": 'alexa',
-            "userId": obj['session']['user']['userId'],
-            "action": '',
-            "intent": obj['request']['intent']['name'],
-            "parameters": obj['request']['intent']['slots'],
-            "incomplete": False,
-            "response": '',
-            "input": ''
-        }
-        for i in inputData["parameters"]:
-            inputData["parameters"][i] = inputData["parameters"][i]['value']
-        output = evaluate(inputData)
-        print(output)
-    exit = {
-        'version': '1.0',
-        'sessionAttributes': {},
-        'response': {
-            'outputSpeech': {
-                'type': 'PlainText',
-                'text': output
-            },
-            'card': {
-                'type': 'Simple',
-                'title': "SessionSpeechlet - " + 'Title',
-                'content': "SessionSpeechlet - " + output
-            },
-            'reprompt': {
+    try:
+        output = ''
+        print("ALEXA")
+        data = request.data
+        print(data)
+        if data:
+            obj = json.dumps(data)
+            inputData = {
+                "inputSource": 'alexa',
+                "userId": obj['session']['user']['userId'],
+                "action": '',
+                "intent": obj['request']['intent']['name'],
+                "parameters": obj['request']['intent']['slots'],
+                "incomplete": False,
+                "response": '',
+                "input": ''
+            }
+            for i in inputData["parameters"]:
+                inputData["parameters"][i] = inputData["parameters"][i]['value']
+            output = evaluate(inputData)
+            print(output)
+        exit = {
+            'version': '1.0',
+            'sessionAttributes': {},
+            'response': {
                 'outputSpeech': {
                     'type': 'PlainText',
                     'text': output
-                }
-            },
-            'shouldEndSession': False
+                },
+                'card': {
+                    'type': 'Simple',
+                    'title': "SessionSpeechlet - " + 'Title',
+                    'content': "SessionSpeechlet - " + output
+                },
+                'reprompt': {
+                    'outputSpeech': {
+                        'type': 'PlainText',
+                        'text': output
+                    }
+                },
+                'shouldEndSession': False
+            }
         }
-    }
+    except:
+        exit = sys.exc_info()[0]
     res = json.dumps(exit)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
