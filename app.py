@@ -18,6 +18,8 @@ from flask import make_response
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
+DB_FILE = 'db.json'
+
 @app.route('/', methods=['GET','POST'])
 def index():
     print("INDEX")
@@ -87,8 +89,7 @@ def online():
     if 'token' in params:
         body['status'] = 'OK'
         token = params['token']
-        db = TinyDB('db.json')
-        users = db.search(where('token') == token)
+        users = db_get('token', token)
         if users:
             user = users[0]
             if user['code']:
@@ -144,26 +145,38 @@ def webhook():
     r.headers['Content-Type'] = 'application/json'
     return r
 
-def get_user_info(source, userId):
-    user = None
-    db = TinyDB('db.json')
-    users = db.search(where(source) == userId)
-    if users:
-        user = users[0]
-    return user
+def db_get_one(field, value):
+    result = None
+    db = TinyDB(DB_FILE)
+    results = db.search(where(field) == value)
+    if results:
+        result = results[0]
+    return result
 
-def update_user(source, userId, code):
-    db = TinyDB('db.json')
-    query = {'code': ''}
-    query[source] = userId
-    db.update(query, where('code') == code)
+def db_get(field, value):
+    db = TinyDB(DB_FILE')
+    results = db.search(where(field) == value)
+    return results
+
+def db_update(values, field, value):
+    db = TinyDB(DB_FILE)
+    db.update(values, where(field) == value)
+                
+def db_insert(values):
+    db = TinyDB(DB_FILE)
+    db.insert(values)
+                
+def db_remove(field, value):
+    db = TinyDB(DB_FILE)
+    db.remove(where(field) == value)
     
 def get_confirmation_code(source, userId, code):
     res = ''
-    db = TinyDB('db.json')
-    users = db.search(where('code') == code)
+    users = db_get('code', code)
     if users:
-        update_user(source, userId, code)
+        values = {'code': ''}
+        values[source] = userId
+        db_update(values, 'code', code)
     else:
         res = "Your confirmation code is incorrect, " \
             "please provide me the confirmation code again, " \
@@ -175,20 +188,19 @@ def get_random_number():
     return ''.join(["%s" % random.randint(0, 9) for num in range(0, 4)])
 
 def generate_code(token):
-    db = TinyDB('db.json')
     while True:
         code = get_random_number()
-        codes = db.search(where('code') == code)
+        codes = db_get('code", code)
         if not codes:
             break
-    db.insert({'token':token,'code':code,'userId':''})
+    db_insert({'token':token,'code':code,'userId':''})
     return code
 
 def evaluate(data):
     message = data['response']
     userId = data['userId']
     source = data['inputSource']
-    user = get_user_info(source, userId)
+    user = db_get_one(source, userId)
     method = data['intent']
     if method == 'WelcomeIntent':
         if not user:
