@@ -31,6 +31,7 @@ def index():
 @app.route('/alexa', methods=['GET','POST'])
 def alexa():
     exit = {"status":"OK"}
+    shouldFinish = False
     try:
         output = ''
         print("ALEXA")
@@ -50,7 +51,9 @@ def alexa():
             }
             for i in inputData["parameters"].keys():
                 inputData["parameters"][i] = inputData["parameters"][i]["value"]
-            output = evaluate(inputData)
+            response = evaluate(inputData)
+            message = response['message']
+            shouldFinish = response['shouldFinish']
             print(output)
         exit = {
             'version': '1.0',
@@ -58,20 +61,20 @@ def alexa():
             'response': {
                 'outputSpeech': {
                     'type': 'PlainText',
-                    'text': output
+                    'text': message
                 },
                 'card': {
                     'type': 'Simple',
                     'title': "SessionSpeechlet - " + 'Title',
-                    'content': "SessionSpeechlet - " + output
+                    'content': "SessionSpeechlet - " + message
                 },
                 'reprompt': {
                     'outputSpeech': {
                         'type': 'PlainText',
-                        'text': output
+                        'text': message
                     }
                 },
-                'shouldEndSession': False
+                'shouldEndSession': shouldFinish
             }
         }
     except:
@@ -136,7 +139,8 @@ def webhook():
         
     print(json.dumps(inputData, indent=4))
     
-    message = evaluate(inputData)
+    response = evaluate(inputData)
+    message = response['message']
     res = responseFormat(message)
     res = json.dumps(res, indent=4)
     print(res)
@@ -202,6 +206,7 @@ def evaluate(data):
     source = data['inputSource']
     user = db_get_one(source, userId)
     method = data['intent']
+    shouldFinish = False
     if method == 'WelcomeIntent':
         if not user:
             message = "Welcome, I can see that you are a new user. In order to " \
@@ -223,6 +228,7 @@ def evaluate(data):
             action = data['parameters']['Color']
             token = user['token']
             send_message(action, token)
+            shouldFinish = True
     elif method == 'ConfirmationCodeIntent':
         code = data['parameters']['Code']
         hasErrors = get_confirmation_code(source, userId, code)
@@ -230,7 +236,7 @@ def evaluate(data):
             message = hasErrors
         if not message:
             message = "I have confirmed successfully your confirmation code, please ask me to execute something by saying, execute open."
-    return message
+    return {"message": message, "shouldFinish": shouldFinish}
 
 def send_message(message, token):
     apns = APNs(use_sandbox=True, cert_file='aps_dev_cert.pem', key_file='aps_dev_key_decrypted.pem')
