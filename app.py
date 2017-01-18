@@ -154,7 +154,7 @@ def db_get_one(field, value):
     return result
 
 def db_get(field, value):
-    db = TinyDB(DB_FILE')
+    db = TinyDB(DB_FILE)
     results = db.search(where(field) == value)
     return results
 
