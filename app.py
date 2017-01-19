@@ -219,7 +219,7 @@ def tinydb_remove(field, value):
     
 def get_confirmation_code(source, userId, code):
     res = ''
-    users = db_get('code', code)
+    users = db_get_one('code', code)
     if users:
         values = {'code': ''}
         values[source] = userId
