@@ -156,16 +156,14 @@ def webhook():
     return r
 
 def db_connect():
-    db = MongoClient('mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktox')
-    return db['test']
+    db = MongoClient('mongodb://testuser:testpassword@ds117889.mlab.com:17889')
+    return db['desktox']['test']
 
 def tinydb_connect():
     return TinyDB(DB_FILE)
 
 def db_get_one(field, value):
-    # db = db_connect()
-    db = MongoClient('mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktox')
-    col = db['test']
+    db = db_connect()
     query = {}
     query[field] = value
     return col.find_one(query)
