@@ -89,22 +89,26 @@ def alexa():
 @app.route('/online', methods=['GET','POST'])
 def online():
     print("ONLINE")
-    params = request.args.to_dict()
-    body = {"status": "INVALID", "code":""}
-    if 'token' in params:
-        body['status'] = 'OK'
-        token = params['token']
-        users = db_get('token', token)
-        if users:
-            user = users[0]
-            if user['code']:
-                body['code'] = user['code']
+    try:
+        params = request.args.to_dict()
+        body = {"status": "INVALID", "code":""}
+        if 'token' in params:
+            body['status'] = 'OK'
+            token = params['token']
+            users = db_get('token', token)
+            if users:
+                user = users[0]
+                if user['code']:
+                    body['code'] = user['code']
+                else:
+                    body['code'] = generate_code(token)    
             else:
-                body['code'] = generate_code(token)    
-        else:
-            body['code'] = generate_code(token)
-    exit = {"statusCode": "200", "headers": {}, "body": json.dumps(body)}
-    res = json.dumps(exit)
+                body['code'] = generate_code(token)
+        exit = {"statusCode": "200", "headers": {}, "body": json.dumps(body)}
+        res = json.dumps(exit)
+    except:
+        print(sys.exc_info())
+        res = "Error"
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
