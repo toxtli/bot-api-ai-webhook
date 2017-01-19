@@ -237,7 +237,7 @@ def get_random_number():
 def generate_code(token):
     while True:
         code = get_random_number()
-        codes = db_get('code', code)
+        codes = db_get_one('code', code)
         if not codes:
             break
     db_insert({'token':token,'code':code,'userId':''})
