@@ -20,9 +20,6 @@ from flask import make_response
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-DB_URI = 'mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktox'
-DB_NAME = 'desktox'
-DB_TABLE = 'test'
 DB_FILE = 'db.json'
 
 @app.route('/', methods=['GET','POST'])
@@ -159,8 +156,8 @@ def webhook():
     return r
 
 def db_connect():
-    db = MongoClient(DB_URI)
-    return db[DB_NAME][DB_TABLE]
+    db = MongoClient('mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktox')
+    return db['desktox']['test']
 
 def tinydb_connect():
     return TinyDB(DB_FILE)
