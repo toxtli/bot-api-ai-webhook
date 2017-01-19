@@ -95,7 +95,7 @@ def online():
         if 'token' in params:
             body['status'] = 'OK'
             token = params['token']
-            users = db_get('token', token)
+            users = db_get_one('token', token)
             if users:
                 user = users[0]
                 if user['code']:
