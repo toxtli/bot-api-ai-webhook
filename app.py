@@ -2,7 +2,9 @@
 
 from apns import APNs, Frame, Payload
 from tinydb import TinyDB, Query, where
+from pymongo import MongoClient
 
+import pymongo
 import urllib2
 import urllib
 import random
@@ -149,29 +151,64 @@ def webhook():
     r.headers['Content-Type'] = 'application/json'
     return r
 
+def db_connect():
+    db = MongoClient('mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktox')
+    return db['test']
+
+def tinydb_connect():
+    return TinyDB(DB_FILE)
+
 def db_get_one(field, value):
+    db = db_connect()
+    query = {}
+    query[field] = value
+    return db.find_one(query)
+
+def tinydb_get_one(field, value):
+    db = tinydb_connect()
     result = None
-    db = TinyDB(DB_FILE)
     results = db.search(where(field) == value)
     if results:
         result = results[0]
     return result
 
 def db_get(field, value):
-    db = TinyDB(DB_FILE)
+    db = db_connect()
+    query = {}
+    query[field] = value
+    return db.find(query)
+
+def tinydb_get(field, value):
+    db = tinydb_connect()
     results = db.search(where(field) == value)
     return results
 
 def db_update(values, field, value):
-    db = TinyDB(DB_FILE)
+    db = db_connect()
+    query = {}
+    query[field] = value
+    db.update_one(query,{"$set": values})
+
+def tinydb_update(values, field, value):
+    db = tinydb_connect()
     db.update(values, where(field) == value)
-                
+
 def db_insert(values):
-    db = TinyDB(DB_FILE)
+    db = db_connect()
+    db.insert_one(values)
+    
+def tinydb_insert(values):
+    db = tinydb_connect()
     db.insert(values)
-                
+
 def db_remove(field, value):
-    db = TinyDB(DB_FILE)
+    db = db_connect()
+    query = {}
+    query[field] = value
+    db.delete_one(query)
+    
+def tinydb_remove(field, value):
+    db = tinydb_connect()
     db.remove(where(field) == value)
     
 def get_confirmation_code(source, userId, code):
