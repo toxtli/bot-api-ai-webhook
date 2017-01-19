@@ -156,7 +156,7 @@ def webhook():
     return r
 
 def db_connect():
-    db = MongoClient('mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktox/test')
+    db = MongoClient('mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktoxi')
     return db
 
 def tinydb_connect():
