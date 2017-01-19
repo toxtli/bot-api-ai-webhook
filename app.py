@@ -166,7 +166,7 @@ def db_get_one(field, value):
     db = db_connect()
     query = {}
     query[field] = value
-    return col.find_one(query)
+    return db.find_one(query)
 
 def tinydb_get_one(field, value):
     db = tinydb_connect()
