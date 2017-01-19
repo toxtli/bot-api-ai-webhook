@@ -21,6 +21,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 
 DB_URI = 'mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktox'
+DB_NAME = 'desktox'
 DB_TABLE = 'test'
 DB_FILE = 'db.json'
 
@@ -158,9 +159,8 @@ def webhook():
     return r
 
 def db_connect():
-    client = MongoClient(DB_URI)
-    db = client.get_default_database()
-    return db[DB_TABLE]
+    db = MongoClient(DB_URI)
+    return db[DB_NAME][DB_TABLE]
 
 def tinydb_connect():
     return TinyDB(DB_FILE)
