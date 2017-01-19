@@ -157,7 +157,6 @@ def webhook():
 
 def db_connect():
     db = MongoClient('mongodb://testuser:testpassword@ds117889.mlab.com:17889/desktox')
-    print("ONE")
     return db['desktox']['test']
 
 def tinydb_connect():
@@ -167,7 +166,6 @@ def db_get_one(field, value):
     db = db_connect()
     query = {}
     query[field] = value
-    print("TWO")
     return db.find_one(query)
 
 def tinydb_get_one(field, value):
