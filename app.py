@@ -141,6 +141,8 @@ def webhook():
         inputData["userId"] = req['originalRequest']['data']['message']['user']['id']
     elif inputData['inputSource'] == 'telegram':
         inputData["userId"] = req['originalRequest']['data']['message']['from']['id']
+    elif inputData['inputSource'] == 'agent':
+        inputData["userId"] = "agent"
         
     print(json.dumps(inputData, indent=4))
     
