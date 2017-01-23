@@ -120,7 +120,7 @@ def webhook():
     print(json.dumps(req, indent=4))
     
     inputData = {
-        "inputSource": req['originalRequest']['source'],
+        "inputSource": req['result']['source'],
         "userId": '',
         "action": req['result']['action'],
         "intent": req['result']['metadata']['intentName'],
